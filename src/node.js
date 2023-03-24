@@ -164,8 +164,14 @@ function useColors() {
  * @api public
  */
 
+const lightGray = (str) => `\x1b[37m${str}\x1b[0m`;
+
 function formatArgs(args) {
 	const {namespace: name, useColors} = this;
+	const stack = (new Error().stack).split('\n');
+	const line = stack[3].trim();
+	const line2 = stack[4] && stack[4].trim();
+	const line3 = stack[5] && stack[5].trim();
 
 	if (useColors) {
 		const c = this.color;
@@ -174,6 +180,9 @@ function formatArgs(args) {
 
 		args[0] = prefix + args[0].split('\n').join('\n' + prefix);
 		args.push(colorCode + 'm+' + module.exports.humanize(this.diff) + '\u001B[0m');
+		args.push(lightGray(line))
+		if (line2) args.push(lightGray(line2))
+		if (line3) args.push(lightGray(line3))
 	} else {
 		args[0] = getDate() + name + ' ' + args[0];
 	}
